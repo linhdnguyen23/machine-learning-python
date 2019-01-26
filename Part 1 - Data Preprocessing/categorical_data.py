@@ -19,10 +19,15 @@ X[:, 1:3] = imputer.transform(X[:, 1:3])
 # Encoding categorical data
 # Encoding the Independent Variable
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-labelencoder_X = LabelEncoder()
-X[:, 0] = labelencoder_X.fit_transform(X[:, 0])
-onehotencoder = OneHotEncoder(categorical_features = [0])
-X = onehotencoder.fit_transform(X).toarray()
-# Encoding the Dependent Variable
-labelencoder_y = LabelEncoder()
-y = labelencoder_y.fit_transform(y)
+from sklearn.compose import ColumnTransformer
+label_enc_X = LabelEncoder()
+X.iloc[:, 3] = label_enc_X.fit_transform(X.iloc[:, 3])
+# categorical feature is deprecated, use column transformer
+# ohe = OneHotEncoder(categorical_features = [0])
+ohe = OneHotEncoder()
+col_transformer = ColumnTransformer([("one hot encoder", OneHotEncoder(), [3])], remainder = 'passthrough')
+X = col_transformer.fit_transform(X)
+# categorical feature is deprecated, use column transformer
+# X = ohe.fit_transform(X).toarray()
+label_enc_Y = LabelEncoder()
+Y = label_enc_Y.fit_transform(Y)
