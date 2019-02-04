@@ -1,4 +1,4 @@
-# Kernel SVM
+# Decision Tree Classification
 
 # Importing the libraries
 import numpy as np
@@ -7,7 +7,7 @@ import pandas as pd
 
 # Importing the dataset
 dataset = pd.read_csv('Social_Network_Ads.csv')
-X = dataset.iloc[:, [2, 3]]
+X = dataset.iloc[:, [2, 3]].values
 y = dataset.iloc[:, 4].values
 
 # Splitting the dataset into the Training set and Test set
@@ -16,21 +16,21 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, rand
 
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler
-scale_X = StandardScaler()
-X_train = scale_X.fit_transform(X_train)
-X_test = scale_X.fit_transform(X_test)
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
 
-# Fitting SVM Regression to the Training set
-from sklearn.svm import SVC
-classifier = SVC(kernel = 'rbf', random_state = 0)
+# Fitting Decision Tree Classification to the Training set
+from sklearn.tree import DecisionTreeClassifier
+classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
 classifier.fit(X_train, y_train)
 
 # Predicting the Test set results
-y_prediction = classifier.predict(X_test)
+y_pred = classifier.predict(X_test)
 
 # Making the Confusion Matrix
 from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test, y_prediction)
+cm = confusion_matrix(y_test, y_pred)
 
 # Visualising the Training set results
 from matplotlib.colors import ListedColormap
@@ -42,16 +42,15 @@ plt.contourf(X1, X2, classifier.predict(np.array([X1.ravel(), X2.ravel()]).T).re
              alpha = 0.75, cmap = ListedColormap(('red', 'green')))
 plt.xlim(X1.min(), X1.max())
 plt.ylim(X2.min(), X2.max())
-
 for i, j in enumerate(np.unique(y_set)):
     plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
                 c = ListedColormap(('red', 'green'))(i), label = j)
-plt.title('SVM (Test set)')
+plt.title('Decision Tree Classification (Training set)')
 plt.xlabel('Age')
 plt.ylabel('Estimated Salary')
 plt.legend()
 plt.show()
-    
+
 # Visualising the Test set results
 from matplotlib.colors import ListedColormap
 X_set, y_set = X_test, y_test
@@ -62,11 +61,10 @@ plt.contourf(X1, X2, classifier.predict(np.array([X1.ravel(), X2.ravel()]).T).re
              alpha = 0.75, cmap = ListedColormap(('red', 'green')))
 plt.xlim(X1.min(), X1.max())
 plt.ylim(X2.min(), X2.max())
-
 for i, j in enumerate(np.unique(y_set)):
     plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
                 c = ListedColormap(('red', 'green'))(i), label = j)
-plt.title('SVM (Test set)')
+plt.title('Decision Tree Classification (Test set)')
 plt.xlabel('Age')
 plt.ylabel('Estimated Salary')
 plt.legend()
